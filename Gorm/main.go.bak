@@ -1,0 +1,48 @@
+package main
+
+import (
+	"Gorm/lesson02"
+	"fmt"
+
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+)
+
+type Parent struct {
+	ID   int `gorm:"primary_key"`
+	Name string
+}
+
+type Child struct {
+	Parent
+	Age int
+}
+
+func InitDB(dst ...interface{}) *gorm.DB {
+	db, err := gorm.Open(mysql.Open("root:Wam1992-7414@tcp(127.0.0.1:3306)/gorm?charset=utf8mb4&parseTime=True&loc=Local")) //// 连接MySQL
+	if err != nil {                                                                                                         // 判断是否发生错误（err不为空表示有错误）
+		panic(err) // 发生错误时，立即终止程序并打印错误信息
+	}
+
+	db.AutoMigrate(dst...) // 首次执行：创建users表（含id、name字段）
+	// 第二次执行（添加Age字段后）：自动在users表添加age字段
+	fmt.Println("数据库连接成功，表结构已初始化")
+	return db
+}
+
+func main() {
+	db, err := gorm.Open(mysql.Open("root:Wam1992-7414@tcp(127.0.0.1:3306)/gorm?charset=utf8mb4&parseTime=True&loc=Local"))
+	if err != nil {
+		panic(err)
+	}
+
+	// lesson01.Run(db)
+	lesson02.Run(db)
+	// lesson03.Run(db)
+	// lesson03_02.Run(db)
+	// lesson03_03.Run(db)
+	// lesson03_04.Run(db)
+	// lesson04.Run(db)
+
+	//InitDB(&Parent{}, &Child{})
+}
